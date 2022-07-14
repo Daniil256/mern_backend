@@ -9,7 +9,8 @@ import { getMe, login, register } from './controllers/UserController.js'
 import { create, deletePost, getAllPosts, getLastTags, getPost, updatePost } from './controllers/PostController.js'
 import { handleValidationErrors } from './utils/handleValidationErrors.js'
 
-const url = 'mongodb+srv://admin:admin@cluster0.xzwaf.mongodb.net/blog?retryWrites=true&w=majority'
+const url = process.env.MONGODB_URI
+// const url = 'mongodb+srv://admin:admin@cluster0.xzwaf.mongodb.net/blog?retryWrites=true&w=majority'
 
 mongoose
     .connect(url)
@@ -50,7 +51,7 @@ app.delete('/posts/:id', checkAuth, deletePost)
 app.patch('/posts/:id', checkAuth, handleValidationErrors, postValidator, updatePost)
 app.post('/posts', checkAuth, handleValidationErrors, postValidator, create)
 
-app.listen(4444, (err) => {
+app.listen(process.env.PORT || 4444, (err) => {
     if (err) {
         console.log(err)
     }
