@@ -68,6 +68,7 @@ export const deletePost = async (req, res) => {
 export const updatePost = async (req, res) => {
     try {
         const postId = req.params.id
+        const chanchedAt = new Date()
 
         await PostModel.updateOne(
             {
@@ -79,6 +80,7 @@ export const updatePost = async (req, res) => {
                 imageUrl: req.body.imageUrl,
                 tags: req.body.tags.split(','),
                 user: req.userId,
+                chanchedAt
             },
         )
         res.json({ success: true })
