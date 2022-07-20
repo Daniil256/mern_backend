@@ -10,6 +10,7 @@ import { create, deletePost, getAllPosts, getLastTags, getPost, updatePost } fro
 import { handleValidationErrors } from './utils/handleValidationErrors.js'
 
 const url = process.env.MONGODB_URI
+console.log(url);
 // const url = 'mongodb+srv://admin:admin@cluster0.xzwaf.mongodb.net/blog?retryWrites=true&w=majority'
 
 mongoose
