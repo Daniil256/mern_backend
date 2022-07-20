@@ -81,7 +81,7 @@ export const updatePost = async (req, res) => {
                 tags: req.body.tags.split(','),
                 user: req.userId,
                 test: 'test',
-                chanchedAt
+                updatedAt: chanchedAt
             },
         )
         res.json({ success: true })
