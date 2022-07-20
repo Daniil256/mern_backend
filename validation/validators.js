@@ -14,5 +14,6 @@ export const postValidator = [
     body('title', 'Введите название статьи').isLength({ min: 3 }).isString(),
     body('text', 'Введите текст статьи').isLength({ min: 10 }).isString(),
     body('tags', 'Неверный формат тегов').optional().isArray(),
-    body('imageUrl', 'Неверная ссылка на картинку').optional().isString()
+    body('imageUrl', 'Неверная ссылка на картинку').optional().isString(),
+    body('chanchedAt', 'Неверная ссылк').optional().isString()
 ]
