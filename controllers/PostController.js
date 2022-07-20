@@ -80,6 +80,7 @@ export const updatePost = async (req, res) => {
                 imageUrl: req.body.imageUrl,
                 tags: req.body.tags.split(','),
                 user: req.userId,
+                test: 'test',
                 chanchedAt
             },
         )
