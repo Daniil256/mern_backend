@@ -80,7 +80,6 @@ export const updatePost = async (req, res) => {
                 imageUrl: req.body.imageUrl,
                 tags: req.body.tags.split(','),
                 user: req.userId,
-                test: 'test',
                 updatedAt: chanchedAt
             },
         )
@@ -100,8 +99,7 @@ export const create = async (req, res) => {
             imageUrl: req.body.imageUrl,
             tags: req.body.tags,
             user: req.userId,
-            chanchedAt: null
-
+            test: 'test',
         })
 
         const post = await doc.save()

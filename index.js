@@ -48,7 +48,7 @@ app.get('/posts', getAllPosts)
 app.get('/posts/:id', getPost)
 app.get('/tags', getLastTags)
 app.delete('/posts/:id', checkAuth, deletePost)
-app.patch('/posts/:id', checkAuth, updatePost)
+app.patch('/posts/:id', checkAuth, handleValidationErrors, postValidator, updatePost)
 app.post('/posts', checkAuth, handleValidationErrors, postValidator, create)
 
 app.listen(process.env.PORT || 4444, (err) => {
