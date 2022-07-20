@@ -99,6 +99,8 @@ export const create = async (req, res) => {
             imageUrl: req.body.imageUrl,
             tags: req.body.tags,
             user: req.userId,
+            chanchedAt: null
+
         })
 
         const post = await doc.save()
