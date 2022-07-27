@@ -9,8 +9,7 @@ import { getMe, login, register } from './controllers/UserController.js'
 import { create, deletePost, getAllPosts, getLastTags, getPost, updatePost } from './controllers/PostController.js'
 import { handleValidationErrors } from './utils/handleValidationErrors.js'
 
-const url = process.env.MONGODB_URI
-console.log(url);
+const url = process.env.MONGODB_URI || 'mongodb+srv://admin:admin@cluster0.xzwaf.mongodb.net/blog?retryWrites=true&w=majority'
 // const url = 'mongodb+srv://admin:admin@cluster0.xzwaf.mongodb.net/blog?retryWrites=true&w=majority'
 
 mongoose
