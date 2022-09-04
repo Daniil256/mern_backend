@@ -3,11 +3,29 @@ import { errorProcessing } from "../utils/errorProcessing.js"
 
 export const getLastTags = async (req, res) => {
     try {
-        const posts = await PostModel.find().limit(5).exec()
-        const tags = posts.map(obj => obj.tags).flat().slice(0, 5)
-        res.json(tags)
+        const posts = await PostModel.find({}, { tags: 1 }).limit(20).exec()
+        const tags = []
+        const tagsFilt = []
+        posts.map(obj => tags.push(...obj.tags))
+        const tagsSort = tags.filter((item, index) => tags.indexOf(item) === index)
+        let total = 0
+        tagsSort.map(sotrItem => {
+            let num = 0
+            tags.map(item => {
+                if (sotrItem === item) {
+                    num++
+                }
+            })
+            if (num > total) {
+                total = num
+                tagsFilt.unshift(sotrItem)
+            } else {
+                tagsFilt.push(sotrItem)
+            }
+        })
+        res.json(tagsFilt)
     } catch (error) {
-        errorProcessing(res, error, 500, 'Не удалось загрузить статью')
+        errorProcessing(res, error, 500, 'Не удалось загрузить теги')
     }
 }
 
@@ -20,13 +38,39 @@ export const getAllPosts = async (req, res) => {
     }
 }
 
+export const getPopulatePosts = async (req, res) => {
+    try {
+        const posts = await PostModel.find().sort({ "commentsCount": -1 }).populate('user').exec()
+        res.json(posts)
+    } catch (error) {
+        errorProcessing(res, error, 500, 'Не удалось загрузить статью')
+    }
+}
+
+export const getPostsSortByTag = async (req, res) => {
+    try {
+        const posts = await PostModel.find({ tags: `#${req.params.id}` }).populate('user').exec()
+        res.json(posts)
+    } catch (error) {
+        errorProcessing(res, error, 500, 'Не удалось загрузить статью')
+    }
+}
+
 export const getPost = async (req, res) => {
     try {
-        const postId = req.params.id
-
+        const user = await PostModel.findOne({ _id: req.params.id }, { viewsCount: { _id: req.body._id } })
         PostModel.findOneAndUpdate(
-            { _id: postId },
-            { $inc: { viewsCount: 1 } },
+            { _id: req.params.id },
+            !user.viewsCount.length &&
+            {
+                $push: {
+                    viewsCount: {
+                        fullName: req.body.fullName,
+                        avatarUrl: req.body.avatarUrl,
+                        _id: req.body._id,
+                    }
+                }
+            },
             { returnDocument: 'after' },
             (error, doc) => {
                 if (error) {
@@ -38,7 +82,6 @@ export const getPost = async (req, res) => {
                 res.json(doc)
             }
         ).populate('user')
-
     } catch (error) {
         errorProcessing(res, error, 500, 'Не удалось получить статью')
     }
@@ -46,13 +89,11 @@ export const getPost = async (req, res) => {
 
 export const deletePost = async (req, res) => {
     try {
-        const postId = req.params.id
-
         PostModel.findOneAndDelete({
-            _id: postId
+            _id: req.params.id
         }, (err, doc) => {
             if (err) {
-                return errorProcessing(res, error, 500, 'Не удалось удалить статью')
+                return errorProcessing(res, err, 500, 'Не удалось удалить статью')
             }
             if (!doc) {
                 return errorProcessing(res, false, 404, 'Статья не найдена')
@@ -67,12 +108,11 @@ export const deletePost = async (req, res) => {
 
 export const updatePost = async (req, res) => {
     try {
-        const postId = req.params.id
         const changedAt = new Date()
 
         await PostModel.updateOne(
             {
-                _id: postId
+                _id: req.params.id
             },
             {
                 title: req.body.title,
@@ -102,9 +142,8 @@ export const create = async (req, res) => {
         })
 
         const post = await doc.save()
-
         res.json(post)
     } catch (error) {
         errorProcessing(res, error, 500, 'Не удалось создать статью')
     }
-}
+} 
