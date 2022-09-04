@@ -5,7 +5,6 @@ const PostSchema = new mongoose.Schema(
     {
         title: {
             type: String,
-            required: true
         },
         text: {
             type: String,
@@ -17,8 +16,13 @@ const PostSchema = new mongoose.Schema(
             default: []
         },
         viewsCount: {
+            type: Array,
+            default: []
+        },
+        commentsCount: {
             type: Number,
-            default: 0
+            default: 0,
+            required: true
         },
         user: {
             type: mongoose.Schema.Types.ObjectId,
