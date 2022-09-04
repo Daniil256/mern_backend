@@ -4,10 +4,20 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 
 import { checkAuth } from './utils/checkAuth.js'
-import { loginValidator, postValidator, registerValidator } from './validation/validators.js'
+import { postValidator, registerValidator } from './validation/validators.js'
 import { getMe, login, register } from './controllers/UserController.js'
-import { create, deletePost, getAllPosts, getLastTags, getPost, updatePost } from './controllers/PostController.js'
+import {
+    create,
+    deletePost,
+    getAllPosts,
+    getLastTags,
+    getPopulatePosts,
+    getPost,
+    getPostsSortByTag,
+    updatePost
+} from './controllers/PostController.js'
 import { handleValidationErrors } from './utils/handleValidationErrors.js'
+import { createComment, getAllComments, getComments } from './controllers/CommentsController.js'
 
 const url = process.env.MONGODB_URI || 'mongodb+srv://admin:admin@cluster0.xzwaf.mongodb.net/blog?retryWrites=true&w=majority'
 // const url = 'mongodb+srv://admin:admin@cluster0.xzwaf.mongodb.net/blog?retryWrites=true&w=majority'
@@ -35,7 +45,7 @@ app.use(cors())
 app.use('/uploads', express.static('uploads'))
 
 
-app.post('/auth/login', loginValidator, handleValidationErrors, login)
+app.post('/auth/login', registerValidator, handleValidationErrors, login)
 app.post('/auth/register', registerValidator, handleValidationErrors, register)
 app.get('/auth/me', checkAuth, getMe)
 app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
@@ -44,8 +54,14 @@ app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
     })
 })
 
+app.get('/comments', getAllComments)
+app.get('/comments/:id', getComments)
+app.post('/posts/:id/comments', checkAuth, createComment)
+
 app.get('/posts', getAllPosts)
-app.get('/posts/:id', getPost)
+app.get('/populatePosts', getPopulatePosts)
+app.put('/posts/:id', getPost)
+app.get('/postsSortByTag/:id', getPostsSortByTag)
 app.get('/tags', getLastTags)
 app.delete('/posts/:id', checkAuth, deletePost)
 app.patch('/posts/:id', checkAuth, handleValidationErrors, postValidator, updatePost)
