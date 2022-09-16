@@ -58,9 +58,10 @@ app.get('/comments', getAllComments)
 app.get('/comments/:id', getComments)
 app.post('/posts/:id/comments', checkAuth, createComment)
 
+app.put('/posts/:id', getPost)
+
 app.get('/posts', getAllPosts)
 app.get('/populatePosts', getPopulatePosts)
-app.put('/posts/:id', getPost)
 app.get('/postsSortByTag/:id', getPostsSortByTag)
 app.get('/tags', getLastTags)
 app.delete('/posts/:id', checkAuth, deletePost)

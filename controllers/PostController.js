@@ -5,25 +5,27 @@ export const getLastTags = async (req, res) => {
     try {
         const posts = await PostModel.find({}, { tags: 1 }).limit(20).exec()
         const tags = []
-        const tagsFilt = []
+        // const tagsFilt = []
         posts.map(obj => tags.push(...obj.tags))
-        const tagsSort = tags.filter((item, index) => tags.indexOf(item) === index)
-        let total = 0
-        tagsSort.map(sotrItem => {
-            let num = 0
-            tags.map(item => {
-                if (sotrItem === item) {
-                    num++
-                }
-            })
-            if (num > total) {
-                total = num
-                tagsFilt.unshift(sotrItem)
-            } else {
-                tagsFilt.push(sotrItem)
-            }
-        })
-        res.json(tagsFilt)
+        // const tagsSort = tags.filter((item, index) => tags.indexOf(item) === index)
+        // let total = 0
+        // tagsSort.map(sotrItem => {
+        //     let num = 0
+        //     tags.map(item => {
+        //         if (sotrItem === item) {
+        //             num++
+        //         }
+        //     })
+        //     if (num > total) {
+        //         total = num
+        //         tagsFilt.unshift(sotrItem)
+        //     } else {
+        //         tagsFilt.push(sotrItem)
+        //     }
+        // })
+        const arSort = [...new Set(tags)]
+        arSort.sort((a, b) => tags.filter(el => el === b).length - tags.filter(el => el === a).length)
+        res.json(arSort)
     } catch (error) {
         errorProcessing(res, error, 500, 'Не удалось загрузить теги')
     }
@@ -58,30 +60,32 @@ export const getPostsSortByTag = async (req, res) => {
 
 export const getPost = async (req, res) => {
     try {
-        const user = await PostModel.findOne({ _id: req.params.id }, { viewsCount: { _id: req.body._id } })
-        PostModel.findOneAndUpdate(
-            { _id: req.params.id },
-            !user.viewsCount.length &&
-            {
-                $push: {
-                    viewsCount: {
-                        fullName: req.body.fullName,
-                        avatarUrl: req.body.avatarUrl,
-                        _id: req.body._id,
+        const user = await PostModel.findOne({ _id: req.params.id }, { viewsCount:{ $elemMatch: { _id: req.body._id } }})
+            PostModel.findOneAndUpdate(
+                { _id: req.params.id },
+                
+                (req.body?._id && !user.viewsCount.length)
+                &&
+                {
+                    $push: {
+                        viewsCount: {
+                            fullName: req.body.fullName,
+                            avatarUrl: req.body.avatarUrl,
+                            _id: req.body._id,
+                        }
                     }
+                },
+                { returnDocument: 'after' },
+                (error, doc) => {
+                    if (error) {
+                        return errorProcessing(res, error, 500, 'Не удалось получить статью')
+                    }
+                    if (!doc) {
+                        return errorProcessing(res, 'Статья не найдена', 404, 'Статья не найдена')
+                    }
+                    res.json(doc)
                 }
-            },
-            { returnDocument: 'after' },
-            (error, doc) => {
-                if (error) {
-                    return errorProcessing(res, error, 500, 'Не удалось получить статью')
-                }
-                if (!doc) {
-                    return errorProcessing(res, 'Статья не найдена', 404, 'Статья не найдена')
-                }
-                res.json(doc)
-            }
-        ).populate('user')
+            ).populate('user')
     } catch (error) {
         errorProcessing(res, error, 500, 'Не удалось получить статью')
     }
