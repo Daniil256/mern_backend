@@ -48,7 +48,7 @@ app.use('/uploads', express.static('uploads'))
 app.post('/auth/login', registerValidator, handleValidationErrors, login)
 app.post('/auth/register', registerValidator, handleValidationErrors, register)
 app.get('/auth/me', checkAuth, getMe)
-app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
+app.post('/uploads', checkAuth, upload.single('image'), (req, res) => {
     res.json({
         url: `/uploads/${req.file.originalname}`
     })
@@ -65,8 +65,8 @@ app.get('/populatePosts', getPopulatePosts)
 app.get('/postsSortByTag/:id', getPostsSortByTag)
 app.get('/tags', getLastTags)
 app.delete('/posts/:id', checkAuth, deletePost)
-app.patch('/posts/:id', checkAuth, handleValidationErrors, postValidator, updatePost)
-app.post('/posts', checkAuth, handleValidationErrors, postValidator, create)
+// app.patch('/postUpdate/:id', checkAuth, handleValidationErrors, postValidator, updatePost)
+// app.post('/posts', checkAuth, handleValidationErrors, postValidator, create)
 
 app.listen(process.env.PORT || 4444, (err) => {
     if (err) {

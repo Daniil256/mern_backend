@@ -8,8 +8,6 @@ const PostSchema = new mongoose.Schema(
         },
         text: {
             type: String,
-            required: true,
-            unique: true
         },
         tags: {
             type: Array,
@@ -30,7 +28,7 @@ const PostSchema = new mongoose.Schema(
             required: true
         },
         imageUrl: String,
-        changedAt: String,
+        changedAt: Date,
     },
     {
         timestamps: true
